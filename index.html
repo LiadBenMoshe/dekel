@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14322c">
+<title>דקל — משקפיים</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#fff; --line:#e3ded3; --ink:#1d2b28; --dim:#6f7d78;
+    --brand:#14322c; --gold:#c9a227; --sale:#c0392b; --ok:#1f8a5b;
+    --shadow:0 2px 10px rgba(20,50,44,.07);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"Segoe UI",Rubik,Arial,sans-serif;line-height:1.6}
+  button{font-family:inherit;cursor:pointer;border:none}
+  img,svg{max-width:100%}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+
+  /* ---------- כותרת ---------- */
+  .top{position:sticky;top:0;z-index:40;background:var(--brand);color:#fff}
+  .top .wrap{display:flex;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px}
+  .logo{font-size:25px;font-weight:800;letter-spacing:-.5px;display:flex;
+    align-items:center;gap:8px}
+  .logo small{font-size:11px;font-weight:400;opacity:.75;letter-spacing:3px}
+  .cartbtn{margin-inline-start:auto;background:rgba(255,255,255,.12);color:#fff;
+    border-radius:11px;padding:9px 15px;font-size:15px;font-weight:600;position:relative}
+  .cartbtn b{background:var(--gold);color:#2a2100;border-radius:99px;
+    padding:1px 7px;font-size:12px;margin-inline-start:5px}
+
+  /* ---------- הירו ---------- */
+  .hero{background:linear-gradient(160deg,#14322c,#1e463d);color:#fff;
+    padding:44px 0 40px;text-align:center}
+  .hero h1{margin:0 0 8px;font-size:clamp(26px,6vw,40px);font-weight:800;letter-spacing:-.6px}
+  .hero p{margin:0 auto;max-width:460px;opacity:.85;font-size:16px}
+  .perks{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:20px}
+  .perks span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+    border-radius:99px;padding:6px 13px;font-size:13px}
+
+  /* ---------- סינון ---------- */
+  .bar{display:flex;gap:8px;overflow-x:auto;padding:18px 0 6px;scrollbar-width:none}
+  .bar::-webkit-scrollbar{display:none}
+  .bar button{background:var(--card);border:1px solid var(--line);color:var(--dim);
+    border-radius:99px;padding:9px 16px;font-size:14.5px;white-space:nowrap;flex:none;
+    font-weight:600}
+  .bar button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .sortrow{display:flex;align-items:center;gap:10px;margin:6px 0 18px;
+    color:var(--dim);font-size:14px;flex-wrap:wrap}
+  select{font-family:inherit;font-size:14px;padding:8px 11px;border-radius:9px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink)}
+
+  /* ---------- מוצרים ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:15px;
+    padding-bottom:40px}
+  .prod{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;
+    transition:.15s}
+  .prod:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,50,44,.12)}
+  .pic{background:#f0ece3;padding:14px;position:relative;cursor:pointer}
+  .tag{position:absolute;top:9px;inset-inline-start:9px;background:var(--sale);color:#fff;
+    font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px}
+  .tag.new{background:var(--ok)}
+  .pbody{padding:12px 13px 14px;display:flex;flex-direction:column;flex:1}
+  .pbody h3{margin:0;font-size:16.5px}
+  .pbody .brandline{color:var(--dim);font-size:13px;margin-bottom:7px}
+  .dots{display:flex;gap:5px;margin-bottom:10px}
+  .dots i{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.15);
+    display:block}
+  .price{margin-top:auto;display:flex;align-items:baseline;gap:7px}
+  .price b{font-size:19px}
+  .price s{color:var(--dim);font-size:14px}
+  .add{width:100%;margin-top:10px;background:var(--brand);color:#fff;border-radius:10px;
+    padding:11px;font-size:15px;font-weight:600}
+  .add:active{opacity:.8}
+  .add.in{background:var(--ok)}
+  .empty{grid-column:1/-1;text-align:center;color:var(--dim);padding:40px 0}
+
+  /* ---------- מגירת עגלה ---------- */
+  .veil{position:fixed;inset:0;background:rgba(15,30,26,.45);opacity:0;
+    pointer-events:none;transition:.2s;z-index:50}
+  .veil.on{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;bottom:0;inset-inline-start:0;width:min(400px,92vw);
+    background:var(--bg);z-index:60;transform:translateX(-102%);transition:.25s;
+    display:flex;flex-direction:column}
+  html[dir=rtl] .drawer{inset-inline-start:auto;inset-inline-end:0;transform:translateX(102%)}
+  .drawer.on{transform:none}
+  .dhead{background:var(--brand);color:#fff;padding:16px;display:flex;align-items:center}
+  .dhead b{font-size:18px}
+  .dhead button{margin-inline-start:auto;background:transparent;color:#fff;font-size:22px;
+    line-height:1;padding:0 4px}
+  .ditems{flex:1;overflow:auto;padding:14px}
+  .item{display:flex;gap:11px;background:var(--card);border:1px solid var(--line);
+    border-radius:13px;padding:10px;margin-bottom:10px}
+  .item .thumb{width:74px;flex:none;background:#f0ece3;border-radius:9px;padding:4px}
+  .item h4{margin:0;font-size:15px}
+  .item .sub{color:var(--dim);font-size:12.5px}
+  .qty{display:flex;align-items:center;gap:6px;margin-top:6px}
+  .qty button{width:27px;height:27px;border-radius:7px;border:1px solid var(--line);
+    background:var(--card);font-size:16px;line-height:1;color:var(--ink)}
+  .qty span{min-width:20px;text-align:center;font-weight:600}
+  .qty .rm{margin-inline-start:auto;border:none;background:none;color:var(--sale);
+    font-size:13px;width:auto}
+  .dfoot{border-top:1px solid var(--line);padding:14px;background:var(--card)}
+  .line{display:flex;justify-content:space-between;font-size:14.5px;color:var(--dim);
+    margin-bottom:5px}
+  .line.total{color:var(--ink);font-size:19px;font-weight:800;margin:9px 0 0}
+  .pay{width:100%;margin-top:12px;background:var(--gold);color:#2a2100;border-radius:11px;
+    padding:14px;font-size:16px;font-weight:700}
+  .pay:disabled{opacity:.45;cursor:not-allowed}
+  .demo{color:var(--dim);font-size:12px;text-align:center;margin-top:9px}
+
+  /* ---------- מודאל מוצר ---------- */
+  .modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;
+    justify-content:center;padding:16px;background:rgba(15,30,26,.5)}
+  .modal.on{display:flex}
+  .mbox{background:var(--bg);border-radius:18px;max-width:440px;width:100%;
+    max-height:90vh;overflow:auto}
+  .mbox .pic{border-radius:18px 18px 0 0}
+  .mbody{padding:16px}
+  .mbody h3{margin:0 0 2px;font-size:22px}
+  .spec{display:flex;justify-content:space-between;border-top:1px solid var(--line);
+    padding:9px 0;font-size:14.5px}
+  .spec span{color:var(--dim)}
+  .mclose{width:100%;margin-top:10px;background:var(--card);border:1px solid var(--line);
+    border-radius:10px;padding:11px;font-size:15px;color:var(--ink)}
+
+  footer{background:var(--brand);color:rgba(255,255,255,.75);padding:26px 0;
+    font-size:13.5px;text-align:center;margin-top:20px}
+  footer b{color:#fff;display:block;font-size:16px;margin-bottom:4px}
+
+  .toast{position:fixed;bottom:18px;inset-inline-start:50%;transform:translateX(50%) translateY(90px);
+    background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-size:14.5px;
+    z-index:80;transition:.25s;opacity:0}
+  .toast.on{transform:translateX(50%);opacity:1}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="logo">🌴 דקל <small>EYEWEAR</small></div>
+    <button class="cartbtn" id="openCart">🛒 העגלה<b id="cnt">0</b></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>משקפיים שמתאימים לך</h1>
+    <p>מסגרות איכותיות, עדשות עם ציפוי מלא, והתאמה אישית בחנות או מרחוק.</p>
+    <div class="perks">
+      <span>✓ משלוח חינם מעל ₪300</span>
+      <span>✓ החזרה עד 30 יום</span>
+      <span>✓ אחריות שנתיים</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="bar" id="cats"></div>
+  <div class="sortrow">
+    <label for="sort">מיון:</label>
+    <select id="sort">
+      <option value="pop">מומלצים</option>
+      <option value="low">מחיר — מהזול ליקר</option>
+      <option value="high">מחיר — מהיקר לזול</option>
+      <option value="name">לפי שם</option>
+    </select>
+    <span id="count"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <b>🌴 דקל משקפיים</b>
+    אופטומטריסט מוסמך · בדיקת ראייה בתיאום מראש · ימים א׳-ה׳ 09:00-19:00
+    <div style="margin-top:8px;opacity:.6;font-size:12px">אתר הדגמה — ההזמנות אינן אמיתיות ואין גבייה.</div>
+  </div>
+</footer>
+
+<!-- עגלה -->
+<div class="veil" id="veil"></div>
+<aside class="drawer" id="drawer">
+  <div class="dhead"><b>🛒 העגלה שלי</b><button id="closeCart">✕</button></div>
+  <div class="ditems" id="ditems"></div>
+  <div class="dfoot">
+    <div class="line"><span>ביניים</span><span id="sub">₪0</span></div>
+    <div class="line"><span>משלוח</span><span id="ship">—</span></div>
+    <div class="line total"><span>סה"כ</span><span id="tot">₪0</span></div>
+    <button class="pay" id="pay" disabled>מעבר לתשלום</button>
+    <div class="demo">אתר הדגמה — לא תתבצע גבייה ולא נאספים פרטי אשראי</div>
+  </div>
+</aside>
+
+<!-- מוצר -->
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const ils = n => '₪' + n.toLocaleString('he-IL');
+
+/* ================= מלאי ================= */
+/* shape: צורת המסגרת · colors: קודי צבע למסגרת */
+const CATS = [
+  ['all','הכל'], ['optic','משקפי ראייה'], ['sun','משקפי שמש'],
+  ['screen','סינון מסכים'], ['kids','ילדים'], ['sport','ספורט']
+];
+
+const PRODUCTS = [
+  {id:1,  name:'ארבל',   brand:'דקל קלאסיק', cat:'optic',  shape:'rect',  price:390, was:490, colors:['#2f2f33','#6b4a2f','#8d8f96'], mat:'אצטט',      w:'138 מ״מ', tag:'מבצע'},
+  {id:2,  name:'שקד',    brand:'דקל קלאסיק', cat:'optic',  shape:'round', price:420, colors:['#1c1c1f','#9a7b4f','#3b5563'],       mat:'מתכת דקה',  w:'135 מ״מ'},
+  {id:3,  name:'תמר',    brand:'דקל נשים',   cat:'optic',  shape:'cat',   price:460, colors:['#7d2b45','#2f2f33','#c08a53'],       mat:'אצטט',      w:'134 מ״מ', tag:'חדש'},
+  {id:4,  name:'ליבנה',  brand:'דקל לייט',   cat:'optic',  shape:'round', price:350, colors:['#b7935f','#4a4a50'],                  mat:'טיטניום',   w:'137 מ״מ'},
+  {id:5,  name:'אלון',   brand:'דקל גברים',  cat:'optic',  shape:'rect',  price:520, colors:['#23262b','#3d2e23'],                  mat:'טיטניום',   w:'142 מ״מ'},
+  {id:6,  name:'רותם',   brand:'דקל לייט',   cat:'optic',  shape:'cat',   price:380, colors:['#d8c3a5','#6b4a2f','#2f2f33'],       mat:'אצטט',      w:'136 מ״מ'},
+
+  {id:7,  name:'נגב',    brand:'דקל סאן',    cat:'sun',    shape:'aviator',price:540, was:640, colors:['#c8a34a','#8d8f96','#23262b'], mat:'מתכת', w:'140 מ״מ', tag:'מבצע'},
+  {id:8,  name:'ערבה',   brand:'דקל סאן',    cat:'sun',    shape:'cat',   price:480, colors:['#2f2f33','#7d2b45'],                  mat:'אצטט',      w:'137 מ״מ'},
+  {id:9,  name:'אילת',   brand:'דקל סאן',    cat:'sun',    shape:'round', price:430, colors:['#3b5563','#c08a53'],                  mat:'אצטט',      w:'136 מ״מ'},
+  {id:10, name:'כרמל',   brand:'דקל סאן',    cat:'sun',    shape:'rect',  price:510, colors:['#23262b','#4a5d4e'],                  mat:'אצטט מט',   w:'141 מ״מ', tag:'חדש'},
+
+  {id:11, name:'מסך',    brand:'דקל דיגיטל', cat:'screen', shape:'rect',  price:290, colors:['#2f2f33','#3b5563','#7a5c3e'],       mat:'TR-90',     w:'139 מ״מ'},
+  {id:12, name:'לילה',   brand:'דקל דיגיטל', cat:'screen', shape:'round', price:310, colors:['#1c1c1f','#8d8f96'],                  mat:'TR-90',     w:'136 מ״מ'},
+  {id:13, name:'פוקוס',  brand:'דקל דיגיטל', cat:'screen', shape:'cat',   price:330, was:399, colors:['#5a4a6b','#2f2f33'],         mat:'אצטט',      w:'135 מ״מ', tag:'מבצע'},
+
+  {id:14, name:'גוזל',   brand:'דקל קידס',   cat:'kids',   shape:'round', price:240, colors:['#e0533d','#2e8bc0','#3aa25d'],       mat:'גומי גמיש', w:'122 מ״מ'},
+  {id:15, name:'זוזו',   brand:'דקל קידס',   cat:'kids',   shape:'rect',  price:260, colors:['#2e8bc0','#e8b23a','#e0533d'],       mat:'גומי גמיש', w:'126 מ״מ', tag:'חדש'},
+
+  {id:16, name:'מרתון',  brand:'דקל ספורט',  cat:'sport',  shape:'sport', price:470, colors:['#1c1c1f','#e0533d','#2e8bc0'],       mat:'פוליקרבונט',w:'145 מ״מ'},
+  {id:17, name:'גלים',   brand:'דקל ספורט',  cat:'sport',  shape:'sport', price:560, was:690, colors:['#23262b','#3aa25d'],         mat:'פוליקרבונט',w:'146 מ״מ', tag:'מבצע'},
+  {id:18, name:'שיא',    brand:'דקל ספורט',  cat:'sport',  shape:'aviator',price:495, colors:['#8d8f96','#1c1c1f'],                 mat:'מתכת קלה',  w:'143 מ״מ'}
+];
+
+/* ================= ציור המסגרת ================= */
+function glasses(shape, color, tint){
+  const s = {
+    round:   '<circle cx="62" cy="52" r="27"/><circle cx="138" cy="52" r="27"/>',
+    rect:    '<rect x="33" y="30" width="58" height="42" rx="9"/>' +
+             '<rect x="109" y="30" width="58" height="42" rx="9"/>',
+    cat:     '<path d="M33 40 Q35 28 62 28 Q91 28 91 44 Q91 72 62 72 Q33 72 33 40Z"/>' +
+             '<path d="M167 40 Q165 28 138 28 Q109 28 109 44 Q109 72 138 72 Q167 72 167 40Z"/>',
+    aviator: '<path d="M32 34 H92 Q90 76 62 76 Q36 76 32 34Z"/>' +
+             '<path d="M108 34 H168 Q166 76 138 76 Q112 76 108 34Z"/>',
+    sport:   '<path d="M28 34 Q100 22 172 34 Q170 74 138 74 Q112 74 100 56 Q88 74 62 74 Q30 74 28 34Z"/>'
+  }[shape];
+
+  const lens = tint || 'rgba(120,160,175,.22)';
+  return '<svg viewBox="0 0 200 104" role="img" aria-label="מסגרת ' + shape + '">' +
+    '<g fill="' + lens + '" stroke="' + color + '" stroke-width="6" ' +
+      'stroke-linejoin="round" stroke-linecap="round">' + s + '</g>' +
+    '<g stroke="' + color + '" stroke-width="6" stroke-linecap="round" fill="none">' +
+      (shape === 'sport' ? '' : '<path d="M91 44 Q100 38 109 44"/>') +
+      '<path d="M30 40 L12 50"/><path d="M170 40 L188 50"/>' +
+    '</g></svg>';
+}
+
+/* ================= מצב ================= */
+const CART_KEY = 'dekel_cart';
+let cat = 'all', sort = 'pop';
+let cart = load();
+
+function load(){
+  try { const c = JSON.parse(localStorage.getItem(CART_KEY)); return c && typeof c === 'object' ? c : {}; }
+  catch(e){ return {}; }
+}
+function save(){
+  try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(e){ /* אחסון חסום */ }
+}
+const find = id => PRODUCTS.find(p => p.id === +id);
+
+/* ================= קטלוג ================= */
+$('cats').innerHTML = CATS.map(([id, name]) =>
+  '<button data-c="' + id + '"' + (id === cat ? ' class="on"' : '') + '>' + name + '</button>').join('');
+
+function visible(){
+  let list = PRODUCTS.filter(p => cat === 'all' || p.cat === cat);
+  if (sort === 'low')  list = list.slice().sort((a,b) => a.price - b.price);
+  if (sort === 'high') list = list.slice().sort((a,b) => b.price - a.price);
+  if (sort === 'name') list = list.slice().sort((a,b) => a.name.localeCompare(b.name,'he'));
+  return list;
+}
+
+function renderGrid(){
+  const list = visible();
+  $('count').textContent = list.length + ' דגמים';
+
+  $('grid').innerHTML = list.length ? list.map(p => {
+    const inCart = !!cart[p.id];
+    return '<article class="prod">' +
+      '<div class="pic" data-open="' + p.id + '">' +
+        (p.tag ? '<span class="tag' + (p.tag === 'חדש' ? ' new' : '') + '">' + p.tag + '</span>' : '') +
+        glasses(p.shape, p.colors[0], p.cat === 'sun' ? 'rgba(40,45,50,.55)' : null) +
+      '</div>' +
+      '<div class="pbody">' +
+        '<h3>' + p.name + '</h3>' +
+        '<div class="brandline">' + p.brand + '</div>' +
+        '<div class="dots">' + p.colors.map(c => '<i style="background:' + c + '"></i>').join('') + '</div>' +
+        '<div class="price"><b>' + ils(p.price) + '</b>' +
+          (p.was ? '<s>' + ils(p.was) + '</s>' : '') + '</div>' +
+        '<button class="add' + (inCart ? ' in' : '') + '" data-add="' + p.id + '">' +
+          (inCart ? '✓ בעגלה · הוסף עוד' : 'הוספה לעגלה') + '</button>' +
+      '</div></article>';
+  }).join('') : '<div class="empty">אין דגמים בקטגוריה הזו</div>';
+}
+
+$('cats').addEventListener('click', e => {
+  const b = e.target.closest('button[data-c]');
+  if (!b) return;
+  cat = b.dataset.c;
+  for (const n of $('cats').children) n.classList.toggle('on', n === b);
+  renderGrid();
+});
+$('sort').addEventListener('change', e => { sort = e.target.value; renderGrid(); });
+
+/* ================= עגלה ================= */
+function cartCount(){ return Object.values(cart).reduce((a,b) => a + b, 0); }
+function subtotal(){
+  return Object.entries(cart).reduce((s,[id,q]) => s + find(id).price * q, 0);
+}
+
+function renderCart(){
+  const n = cartCount();
+  $('cnt').textContent = n;
+
+  const entries = Object.entries(cart);
+  $('ditems').innerHTML = entries.length ? entries.map(([id,q]) => {
+    const p = find(id);
+    return '<div class="item">' +
+      '<div class="thumb">' + glasses(p.shape, p.colors[0], p.cat === 'sun' ? 'rgba(40,45,50,.55)' : null) + '</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<h4>' + p.name + '</h4>' +
+        '<div class="sub">' + p.brand + ' · ' + ils(p.price) + '</div>' +
+        '<div class="qty">' +
+          '<button data-q="-1" data-id="' + p.id + '">−</button>' +
+          '<span>' + q + '</span>' +
+          '<button data-q="1" data-id="' + p.id + '">+</button>' +
+          '<button class="rm" data-rm="' + p.id + '">הסר</button>' +
+        '</div>' +
+      '</div></div>';
+  }).join('') : '<div class="empty">העגלה ריקה</div>';
+
+  const sub = subtotal();
+  const ship = sub === 0 ? 0 : (sub >= 300 ? 0 : 29);
+  $('sub').textContent = ils(sub);
+  $('ship').textContent = sub === 0 ? '—' : (ship === 0 ? 'חינם' : ils(ship));
+  $('tot').textContent = ils(sub + ship);
+  $('pay').disabled = entries.length === 0;
+
+  renderGrid();
+}
+
+function addToCart(id){
+  cart[id] = (cart[id] || 0) + 1;
+  save(); renderCart();
+  toast(find(id).name + ' נוסף לעגלה');
+}
+
+document.addEventListener('click', e => {
+  const add = e.target.closest('[data-add]');
+  if (add) return addToCart(add.dataset.add);
+
+  const q = e.target.closest('[data-q]');
+  if (q){
+    const id = q.dataset.id;
+    cart[id] += +q.dataset.q;
+    if (cart[id] <= 0) delete cart[id];
+    save(); renderCart();
+    return;
+  }
+
+  const rm = e.target.closest('[data-rm]');
+  if (rm){ delete cart[rm.dataset.rm]; save(); renderCart(); return; }
+
+  const op = e.target.closest('[data-open]');
+  if (op) return openProduct(op.dataset.open);
+});
+
+function drawer(on){
+  $('drawer').classList.toggle('on', on);
+  $('veil').classList.toggle('on', on);
+}
+$('openCart').addEventListener('click', () => drawer(true));
+$('closeCart').addEventListener('click', () => drawer(false));
+$('veil').addEventListener('click', () => drawer(false));
+
+$('pay').addEventListener('click', () => {
+  const n = cartCount(), sum = $('tot').textContent;
+  toast('זהו אתר הדגמה — ' + n + ' פריטים, ' + sum + '. לא בוצעה גבייה.');
+});
+
+/* ================= מודאל מוצר ================= */
+function openProduct(id){
+  const p = find(id);
+  $('mbox').innerHTML =
+    '<div class="pic">' + glasses(p.shape, p.colors[0], p.cat === 'sun' ? 'rgba(40,45,50,.55)' : null) + '</div>' +
+    '<div class="mbody">' +
+      '<h3>' + p.name + '</h3>' +
+      '<div class="brandline" style="color:var(--dim);font-size:14px">' + p.brand + '</div>' +
+      '<div class="price" style="margin:10px 0"><b>' + ils(p.price) + '</b>' +
+        (p.was ? '<s>' + ils(p.was) + '</s>' : '') + '</div>' +
+      '<div class="spec"><span>חומר המסגרת</span><b>' + p.mat + '</b></div>' +
+      '<div class="spec"><span>רוחב כולל</span><b>' + p.w + '</b></div>' +
+      '<div class="spec"><span>צבעים</span><b>' + p.colors.length + ' גוונים</b></div>' +
+      '<div class="spec"><span>עדשות</span><b>כלולות, עם ציפוי אנטי-רפלקס</b></div>' +
+      '<button class="add" data-add="' + p.id + '" style="margin-top:14px">הוספה לעגלה</button>' +
+      '<button class="mclose">סגירה</button>' +
+    '</div>';
+  $('modal').classList.add('on');
+}
+$('modal').addEventListener('click', e => {
+  if (e.target === $('modal') || e.target.classList.contains('mclose'))
+    $('modal').classList.remove('on');
+});
+
+/* ================= הודעה קופצת ================= */
+let tId = 0;
+function toast(msg){
+  $('toast').textContent = msg;
+  $('toast').classList.add('on');
+  clearTimeout(tId);
+  tId = setTimeout(() => $('toast').classList.remove('on'), 2600);
+}
+
+renderCart();
+</script>
+</body>
+</html>
